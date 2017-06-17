@@ -8,7 +8,7 @@ class ItemsView extends AbstractView {
 
   getMarkup () {
     return `
-      <div id="list">
+      <div id="items">
         ${this._items.map((item, index) => `
           <article class="list-item">
             <div class="list-item-handle"></div>

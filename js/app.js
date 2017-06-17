@@ -2,7 +2,7 @@ import Sortable from 'sortablejs'
 import ItemsView from './views/items-view'
 import ErrorView from './views/error-view'
 
-const items = document.querySelector('.cities-all')
+const list = document.querySelector('.cities-all')
 
 let weatherData
 
@@ -20,17 +20,26 @@ export default class App {
   }
 
   static showError () {
-    items.innerHTML = ''
-    items.appendChild(ErrorView())
+    list.innerHTML = ''
+    list.appendChild(ErrorView())
   }
 
   static showItems () {
-    items.innerHTML = ''
-    items.appendChild(ItemsView(weatherData))
+    list.innerHTML = ''
+    list.appendChild(ItemsView(weatherData))
 
-    let list = items.querySelector('#list')
+    let items = list.querySelector('#items')
+    let itemsSelected = document.getElementById('items-selected')
 
-    Sortable.create(list, {
+    Sortable.create(items, {
+      group: 'cities',
+      handle: '.list-item-handle',
+      draggable: '.list-item',
+      animation: 100
+    })
+
+    Sortable.create(itemsSelected, {
+      group: 'cities',
       handle: '.list-item-handle',
       draggable: '.list-item',
       animation: 100
