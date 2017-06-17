@@ -8,20 +8,22 @@ class ItemsView extends AbstractView {
 
   getMarkup () {
     return `
-      ${this._items.map((item, index) => `
-        <article class="list-item">
-          <div class="list-item-handle"></div>
-          <h3 class="list-item-title">
-            <span class="list-item-name">${item.name}</span>,
-            <span class="list-item-weather">${item.weather}</span>
-          </h3>
-          <div class="list-item-features">
-            ${item.features.map((feature) => `
-              <span class="list-item-feature">${feature}</span>
-            `).join('')}
-          </div>
-        </article>
-      `).join('')}
+      <div id="list">
+        ${this._items.map((item, index) => `
+          <article class="list-item">
+            <div class="list-item-handle"></div>
+            <h3 class="list-item-title">
+              <span class="list-item-name">${item.name}</span>,
+              <span class="list-item-weather">${item.weather}</span>
+            </h3>
+            <div class="list-item-features">
+              ${item.features.map((feature) => `
+                <span class="list-item-feature">${feature}</span>
+              `).join('')}
+            </div>
+          </article>
+        `).join('')}
+      </div>
     `
   }
 }

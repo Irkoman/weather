@@ -1,3 +1,4 @@
+import Sortable from 'sortablejs'
 import ItemsView from './views/items-view'
 import ErrorView from './views/error-view'
 
@@ -26,6 +27,14 @@ export default class App {
   static showItems () {
     items.innerHTML = ''
     items.appendChild(ItemsView(weatherData))
+
+    let list = items.querySelector('#list')
+
+    Sortable.create(list, {
+      handle: '.list-item-handle',
+      draggable: '.list-item',
+      animation: 100
+    })
   }
 
   static showMap () {
@@ -35,7 +44,7 @@ export default class App {
       container: 'map',
       style: 'mapbox://styles/mapbox/streets-v9',
       center: [40.926418, 57.767683],
-      zoom: 7
+      zoom: 5
     })
 
     map.on('load', () => {
