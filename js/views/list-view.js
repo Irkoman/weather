@@ -1,6 +1,7 @@
+import App from '../app'
 import AbstractView from './abstract-view'
 
-class ItemsView extends AbstractView {
+class ListView extends AbstractView {
   constructor (items) {
     super()
     this._items = items
@@ -8,7 +9,7 @@ class ItemsView extends AbstractView {
 
   getMarkup () {
     return `
-      <div id="items">
+      <div id="list">
         ${this._items.map((item, index) => `
           <article class="list-item">
             <div class="list-item-handle"></div>
@@ -26,8 +27,25 @@ class ItemsView extends AbstractView {
       </div>
     `
   }
+
+  bindHandlers () {
+    const items = Array.from(this.element.querySelectorAll('.list-item'))
+
+    items.forEach((item, index) => {
+      let lng = this._items[index].location.lng
+      let lat = this._items[index].location.lat
+
+      item.addEventListener('mouseenter', (e) => {
+        App.toggleMarkerHighlight(lng, lat, false)
+      })
+
+      item.addEventListener('mouseleave', (e) => {
+        App.toggleMarkerHighlight(lng, lat, true)
+      })
+    })
+  }
 }
 
 export default (items) => {
-  return new ItemsView(items).element
+  return new ListView(items).element
 }

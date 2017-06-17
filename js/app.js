@@ -1,8 +1,8 @@
 import Sortable from 'sortablejs'
-import ItemsView from './views/items-view'
+import ListView from './views/list-view'
 import ErrorView from './views/error-view'
 
-const list = document.querySelector('.cities-all')
+const container = document.querySelector('.cities-all')
 
 let weatherData
 
@@ -20,25 +20,25 @@ export default class App {
   }
 
   static showError () {
-    list.innerHTML = ''
-    list.appendChild(ErrorView())
+    container.innerHTML = ''
+    container.appendChild(ErrorView())
   }
 
-  static showItems () {
-    list.innerHTML = ''
-    list.appendChild(ItemsView(weatherData))
+  static showList () {
+    container.innerHTML = ''
+    container.appendChild(ListView(weatherData))
 
-    let items = list.querySelector('#items')
-    let itemsSelected = document.getElementById('items-selected')
+    let list = container.querySelector('#list')
+    let listSelected = document.getElementById('list-selected')
 
-    Sortable.create(items, {
+    Sortable.create(list, {
       group: 'cities',
       handle: '.list-item-handle',
       draggable: '.list-item',
       animation: 100
     })
 
-    Sortable.create(itemsSelected, {
+    Sortable.create(listSelected, {
       group: 'cities',
       handle: '.list-item-handle',
       draggable: '.list-item',
@@ -52,19 +52,39 @@ export default class App {
     const map = new mapboxgl.Map({
       container: 'map',
       style: 'mapbox://styles/mapbox/streets-v9',
-      center: [40.926418, 57.767683],
-      zoom: 5
+      center: [37.617761, 55.755773],
+      zoom: 4
     })
 
     map.on('load', () => {
       weatherData.forEach(function (marker) {
         let el = document.createElement('div')
+        el.className = 'marker'
         el.style.cssText += 'width: 15px; height: 15px; border-radius: 50%; background-color: rgb(117, 224, 187); box-shadow: 0 0 10px rgba(0, 0, 0, 0.6)'
+        el.setAttribute('data-lat', marker.location.lat)
+        el.setAttribute('data-lng', marker.location.lng)
 
         new mapboxgl.Marker(el, { offset: [-5, -5] })
           .setLngLat([marker.location.lng, marker.location.lat])
           .addTo(map)
       })
+    })
+  }
+
+  static toggleMarkerHighlight (lng, lat, isHighlighted) {
+    const markers = Array.from(document.querySelectorAll('.marker'))
+
+    markers.forEach((marker, index) => {
+      let markerLng = marker.getAttribute('data-lng')
+      let markerLat = marker.getAttribute('data-lat')
+
+      if ((lng === markerLng) && (lat === markerLat)) {
+        if (isHighlighted) {
+          marker.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.6)'
+        } else {
+          marker.style.boxShadow = '0 0 20px rgb(120, 120, 0)'
+        }
+      }
     })
   }
 }

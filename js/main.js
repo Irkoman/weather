@@ -12,6 +12,6 @@ window.fetch('data/data.json')
     .then((data) => {
       App.data = data
     })
-    .then(App.showItems)
+    .then(App.showList)
     .then(App.showMap)
     .catch(App.showError)
