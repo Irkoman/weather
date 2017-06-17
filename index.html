@@ -4,6 +4,8 @@
   <meta charset="utf-8">
   <title>Погода в городах России</title>
   <link rel="stylesheet" href="/css/main.css">
+  <link href="https://api.mapbox.com/mapbox-gl-js/v0.38.0/mapbox-gl.css" rel="stylesheet">
+  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.38.0/mapbox-gl.js'></script>
 </head>
 <body>
 
@@ -35,7 +37,7 @@
     <div class="layout-col-content cities cities-selected"></div>
   </div>
 
-  <div class="map layout-wide"></div>
+  <div class="map layout-wide" id="map"></div>
 </div>
 
 <template id="tmpl">

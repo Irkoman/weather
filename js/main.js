@@ -13,4 +13,5 @@ window.fetch('data/data.json')
       App.data = data
     })
     .then(App.showItems)
+    .then(App.showMap)
     .catch(App.showError)

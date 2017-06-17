@@ -27,4 +27,26 @@ export default class App {
     items.innerHTML = ''
     items.appendChild(ItemsView(weatherData))
   }
+
+  static showMap () {
+    mapboxgl.accessToken = 'pk.eyJ1IjoicGl1LXBpdSIsImEiOiJjajQxODViZWcwOXI1MnhwYXc2d2dzbWw0In0.10Tv1nY4BpM85MDla7FrxA'
+
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/streets-v9',
+      center: [40.926418, 57.767683],
+      zoom: 7
+    })
+
+    map.on('load', () => {
+      weatherData.forEach(function (marker) {
+        let el = document.createElement('div')
+        el.style.cssText += 'width: 15px; height: 15px; border-radius: 50%; background-color: rgb(117, 224, 187); box-shadow: 0 0 10px rgba(0, 0, 0, 0.6)'
+
+        new mapboxgl.Marker(el, { offset: [-5, -5] })
+          .setLngLat([marker.location.lng, marker.location.lat])
+          .addTo(map)
+      })
+    })
+  }
 }
