@@ -1,4 +1,5 @@
 import Sortable from 'sortablejs'
+import Map from './map'
 import ListView from './views/list-view'
 import ErrorView from './views/error-view'
 import { findElementByCoordinates } from './helpers/search-helper'
@@ -48,38 +49,7 @@ export default class App {
   }
 
   static showMap () {
-    mapboxgl.accessToken = 'pk.eyJ1IjoicGl1LXBpdSIsImEiOiJjajQxODViZWcwOXI1MnhwYXc2d2dzbWw0In0.10Tv1nY4BpM85MDla7FrxA'
-
-    const map = new mapboxgl.Map({
-      container: 'map',
-      style: 'mapbox://styles/mapbox/streets-v9',
-      center: [37.617761, 55.755773],
-      zoom: 4
-    })
-
-    map.on('load', () => {
-      weatherData.forEach(function (marker) {
-        let lng = marker.location.lng
-        let lat = marker.location.lat
-        let el = document.createElement('div')
-        el.className = 'marker'
-        el.style.cssText += 'width: 15px; height: 15px; border-radius: 50%; background-color: rgb(117, 224, 187); box-shadow: 0 0 10px rgba(0, 0, 0, 0.6)'
-        el.setAttribute('data-lng', lng)
-        el.setAttribute('data-lat', lat)
-
-        el.addEventListener('mouseenter', (e) => {
-          App.toggleItemHighlight(lng, lat)
-        })
-
-        el.addEventListener('mouseleave', (e) => {
-          App.toggleItemHighlight(lng, lat)
-        })
-
-        new mapboxgl.Marker(el, { offset: [-5, -5] })
-          .setLngLat([lng, lat])
-          .addTo(map)
-      })
-    })
+    Map.getInstance(weatherData)
   }
 
   static toggleMarkerHighlight (lng, lat, isHighlighted) {

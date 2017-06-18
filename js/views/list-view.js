@@ -1,4 +1,5 @@
 import App from '../app'
+import Map from '../map'
 import AbstractView from './abstract-view'
 
 class ListView extends AbstractView {
@@ -41,6 +42,10 @@ class ListView extends AbstractView {
 
       item.addEventListener('mouseleave', (e) => {
         App.toggleMarkerHighlight(lng, lat, true)
+      })
+
+      item.addEventListener('click', () => {
+        Map.getInstance().showPopup(this._items[index])
       })
     })
   }
