@@ -1,5 +1,14 @@
 import Sortable from 'sortablejs'
 
+let Filter = {
+  'sun': '☀️',
+  'snow': '❄️',
+  'rain': '💧',
+  'wind': '🌬',
+  'meteor': '☄️',
+  'cloud': '🌥'
+}
+
 export function enableSortable () {
   let list = document.getElementById('list')
   let listSelected = document.getElementById('list-selected')
@@ -37,6 +46,12 @@ export function sortBySearchValue (array, value) {
   let regExp = new RegExp(value, 'i')
 
   return array.filter((item) => (regExp.test(item.name)))
+}
+
+export function filterByFeatures (array, feature, isChecked) {
+  let regExp = new RegExp(Filter[feature], 'i')
+
+  return array.filter((item) => (isChecked && regExp.test(item.features.join(' '))))
 }
 
 export function findElementByCoordinates (array, lng, lat) {

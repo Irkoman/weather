@@ -5,17 +5,21 @@ import {
   enableSortable,
   sortAlphabetically,
   sortBySearchValue,
+  filterByFeatures,
   findElementByCoordinates
 } from './helpers/sort-helper'
 
-const container = document.querySelector('.cities-all')
+const container = document.getElementById('layout')
 const sortAscButton = document.getElementById('cities-sort-asc')
 const sortDescButton = document.getElementById('cities-sort-desc')
-const searchInput = document.getElementById('cities-search')
+const searchInput = container.querySelector('.cities-filters-name')
+const filters = container.querySelectorAll('input[name="cities-features"]')
+const listAll = container.querySelector('.cities-all')
+const listSelected = container.querySelector('.cities-selected')
 
-const render = (element) => {
-  container.innerHTML = ''
-  container.appendChild(element)
+const render = (parent, element) => {
+  parent.innerHTML = ''
+  parent.appendChild(element)
 }
 
 let weatherData
@@ -34,11 +38,11 @@ export default class App {
   }
 
   static showError () {
-    render(ErrorView())
+    render(listAll, ErrorView())
   }
 
   static showList () {
-    render(ListView(weatherData))
+    render(listAll, ListView(weatherData))
     enableSortable()
   }
 
@@ -48,24 +52,40 @@ export default class App {
 
   static bindHandlers () {
     sortAscButton.addEventListener('click', () => {
-      let sortedData = sortAlphabetically(weatherData)
+      let sortedItems = sortAlphabetically(weatherData)
 
-      render(ListView(sortedData))
+      render(listAll, ListView(sortedItems))
       enableSortable()
     })
 
     sortDescButton.addEventListener('click', () => {
-      let sortedData = sortAlphabetically(weatherData).reverse()
+      let sortedItems = sortAlphabetically(weatherData).reverse()
 
-      render(ListView(sortedData))
+      render(listAll, ListView(sortedItems))
       enableSortable()
     })
 
     searchInput.addEventListener('input', (e) => {
-      let sortedData = sortBySearchValue(weatherData, e.target.value)
+      let sortedItems = sortBySearchValue(weatherData, e.target.value)
 
-      render(ListView(sortedData))
+      render(listAll, ListView(sortedItems))
       enableSortable()
+    })
+
+    /*
+     * Полный сюр. Большей хаотичности ему добавляет то,
+     * что features в данных хранятся как эмоджи,
+     * а не "sun", "snow", "rain" и т. д., что было бы логичней
+     */
+    filters.forEach((filter) => {
+      filter.addEventListener('click', (e) => {
+        let renderedItems = Array.from(listSelected.querySelectorAll('.list-item'))
+        let dataItems = weatherData.filter((item) => (findElementByCoordinates(renderedItems, item.location.lng, item.location.lat)))
+        let filteredItems = filterByFeatures(dataItems, e.target.value, e.target.checked)
+
+        render(listSelected, ListView(filteredItems))
+        enableSortable()
+      })
     })
   }
 
