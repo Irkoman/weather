@@ -11,7 +11,7 @@ class ListView extends AbstractView {
     return `
       <div id="list">
         ${this._items.map((item, index) => `
-          <article class="list-item">
+          <article class="list-item" data-lng="${item.location.lng}" data-lat="${item.location.lat}">
             <div class="list-item-handle"></div>
             <h3 class="list-item-title">
               <span class="list-item-name">${item.name}</span>,
