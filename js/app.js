@@ -1,10 +1,22 @@
-import Sortable from 'sortablejs'
 import Map from './map'
 import ListView from './views/list-view'
 import ErrorView from './views/error-view'
-import { findElementByCoordinates } from './helpers/search-helper'
+import {
+  enableSortable,
+  sortAlphabetically,
+  sortBySearchValue,
+  findElementByCoordinates
+} from './helpers/sort-helper'
 
 const container = document.querySelector('.cities-all')
+const sortAscButton = document.getElementById('cities-sort-asc')
+const sortDescButton = document.getElementById('cities-sort-desc')
+const searchInput = document.getElementById('cities-search')
+
+const render = (element) => {
+  container.innerHTML = ''
+  container.appendChild(element)
+}
 
 let weatherData
 
@@ -22,34 +34,39 @@ export default class App {
   }
 
   static showError () {
-    container.innerHTML = ''
-    container.appendChild(ErrorView())
+    render(ErrorView())
   }
 
   static showList () {
-    container.innerHTML = ''
-    container.appendChild(ListView(weatherData))
-
-    let list = container.querySelector('#list')
-    let listSelected = document.getElementById('list-selected')
-
-    Sortable.create(list, {
-      group: 'cities',
-      handle: '.list-item-handle',
-      draggable: '.list-item',
-      animation: 100
-    })
-
-    Sortable.create(listSelected, {
-      group: 'cities',
-      handle: '.list-item-handle',
-      draggable: '.list-item',
-      animation: 100
-    })
+    render(ListView(weatherData))
+    enableSortable()
   }
 
   static showMap () {
     Map.getInstance(weatherData)
+  }
+
+  static bindHandlers () {
+    sortAscButton.addEventListener('click', () => {
+      let sortedData = sortAlphabetically(weatherData)
+
+      render(ListView(sortedData))
+      enableSortable()
+    })
+
+    sortDescButton.addEventListener('click', () => {
+      let sortedData = sortAlphabetically(weatherData).reverse()
+
+      render(ListView(sortedData))
+      enableSortable()
+    })
+
+    searchInput.addEventListener('input', (e) => {
+      let sortedData = sortBySearchValue(weatherData, e.target.value)
+
+      render(ListView(sortedData))
+      enableSortable()
+    })
   }
 
   static toggleMarkerHighlight (lng, lat, isHighlighted) {
