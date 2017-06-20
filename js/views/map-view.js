@@ -1,7 +1,7 @@
-import App from './app'
-import PopupView from './views/popup-view'
+import App from '../app'
+import PopupView from './popup-view'
 
-export default class Map {
+export default class MapView {
   constructor (data) {
     this.instance = null
     this._data = data
@@ -10,7 +10,7 @@ export default class Map {
 
   static getInstance (data = null) {
     if (!this.instance) {
-      this.instance = new Map(data)
+      this.instance = new MapView(data)
     }
 
     return this.instance

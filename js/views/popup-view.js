@@ -23,6 +23,4 @@ class PopupView extends AbstractView {
   }
 }
 
-export default (item) => {
-  return new PopupView(item).element
-}
+export default (item) => new PopupView(item).element

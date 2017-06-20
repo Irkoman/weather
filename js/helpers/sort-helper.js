@@ -1,6 +1,6 @@
 import Sortable from 'sortablejs'
 
-let Filter = {
+const FILTERS = {
   'sun': '☀️',
   'snow': '❄️',
   'rain': '💧',
@@ -13,19 +13,23 @@ export function enableSortable () {
   let list = document.getElementById('list')
   let listSelected = document.getElementById('list-selected')
 
-  Sortable.create(list, {
-    group: 'cities',
-    handle: '.list-item-handle',
-    draggable: '.list-item',
-    animation: 100
-  })
+  if (list) {
+    Sortable.create(list, {
+      group: 'cities',
+      handle: '.list-item-handle',
+      draggable: '.list-item',
+      animation: 100
+    })    
+  }
 
-  Sortable.create(listSelected, {
-    group: 'cities',
-    handle: '.list-item-handle',
-    draggable: '.list-item',
-    animation: 100
-  })
+  if (listSelected) {
+    Sortable.create(listSelected, {
+      group: 'cities',
+      handle: '.list-item-handle',
+      draggable: '.list-item',
+      animation: 100
+    })    
+  }
 }
 
 export function sortAlphabetically (array) {
@@ -49,7 +53,7 @@ export function sortBySearchValue (array, value) {
 }
 
 export function filterByFeatures (array, feature, isChecked) {
-  let regExp = new RegExp(Filter[feature], 'i')
+  let regExp = new RegExp(FILTERS[feature], 'i')
 
   return array.filter((item) => (isChecked && regExp.test(item.features.join(' '))))
 }

@@ -1,4 +1,4 @@
-import Map from './map'
+import MapView from './views/map-view'
 import ListView from './views/list-view'
 import ErrorView from './views/error-view'
 import {
@@ -47,7 +47,7 @@ export default class App {
   }
 
   static showMap () {
-    Map.getInstance(weatherData)
+    MapView.getInstance(weatherData)
   }
 
   static bindHandlers () {

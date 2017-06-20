@@ -1,5 +1,6 @@
 import App from '../app'
-import Map from '../map'
+import MapView from './map-view'
+import ErrorView from './error-view'
 import AbstractView from './abstract-view'
 
 class ListView extends AbstractView {
@@ -45,12 +46,16 @@ class ListView extends AbstractView {
       })
 
       item.addEventListener('click', () => {
-        Map.getInstance().showPopup(this._items[index])
+        MapView.getInstance().showPopup(this._items[index])
       })
     })
   }
 }
 
 export default (items) => {
-  return new ListView(items).element
+  if (items.length) {
+    return new ListView(items).element
+  } else {
+    return new ErrorView('empty')
+  }
 }
