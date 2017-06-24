@@ -104,6 +104,10 @@ input[type=radio]:checked + .radiogroup-item {
   padding: 10px;
 }
 
+.cities-filters.disabled {
+  opacity: 0.3
+}
+
 .cities-filters-name {
   margin-left: 30px;
   transform: scale(1.2);

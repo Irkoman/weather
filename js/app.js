@@ -4,13 +4,14 @@ import ListView from './views/list-view'
 import ErrorView from './views/error-view'
 import {
   enableSortable,
-  findElementByCoordinates
+  convertElementToItem
 } from './helpers/sort-helper'
 
 const container = document.getElementById('layout')
-const sortAscButton = document.getElementById('cities-sort-asc')
-const sortDescButton = document.getElementById('cities-sort-desc')
+const sortControls = container.querySelector('.layout-col-1 .cities-filters')
+const filterControls = container.querySelector('.layout-col-2 .cities-filters')
 const searchInput = container.querySelector('.cities-filters-name')
+const sortInputs = container.querySelectorAll('input[name="cities-sort"]')
 const filters = container.querySelectorAll('input[name="cities-features"]')
 const listAll = container.querySelector('.cities-all')
 const listSelected = container.querySelector('.cities-selected')
@@ -37,12 +38,15 @@ export default class App {
 
   static showList () {
     model.sort()
+    App.disableSortIfEmpty()
+    App.disableFiltersIfEmpty()
     render(listAll, ListView(model.state.items))
     enableSortable()
   }
 
   static showListSelected () {
     model.filter()
+    App.disableFiltersIfEmpty()
     MapView.getInstance().disableIrrelevantMarkers(model.state.selectedItems)
     render(listSelected, ListView(model.state.selectedItems))
     enableSortable()
@@ -65,42 +69,84 @@ export default class App {
   }
 
   static bindHandlers () {
-    sortAscButton.addEventListener('click', () => {
-      model.setSort('asc')
-      App.showList()
-    })
-
-    sortDescButton.addEventListener('click', () => {
-      model.setSort('desc')
-      App.showList()
-    })
-
     searchInput.addEventListener('input', (e) => {
       model.setSearch(e.target.value)
       App.showList()
     })
 
+    sortInputs.forEach((input) => {
+      input.addEventListener('click', (e) => {
+        model.setSort(e.target.value)
+        App.showList()
+      })
+    })
+
     filters.forEach((filter) => {
       filter.addEventListener('click', (e) => {
-        let renderedItems = Array.from(listSelected.querySelectorAll('.list-item'))
-        let dataItems = model.state.data.filter((item) => (findElementByCoordinates(renderedItems, item.location.lng, item.location.lat)))
-
         if (e.target.checked) {
           model.addFilter(e.target.value)
         } else {
           model.removeFilter(e.target.value)
         }
 
-        model.setSelectedItems(dataItems)
         App.showListSelected()
       })
     })
   }
 
+  static handleSelection (element) {
+    let item = convertElementToItem(model.state.data, element)
+
+    if (item) {
+      model.addSelectedItem(item)
+    }
+  }
+
+  static disableSortIfEmpty () {
+    if (model.state.items.length <= 0) {
+      sortControls.classList.add('disabled')
+      searchInput.disabled = true
+
+      sortInputs.forEach((input) => {
+        input.disabled = true
+      })
+    } else {
+      sortControls.classList.remove('disabled')
+      searchInput.disabled = false
+
+      sortInputs.forEach((input) => {
+        input.disabled = false
+      })
+    }
+  }
+
+  static disableFiltersIfEmpty () {
+    if (model.state.selectedItems <= 0) {
+      filterControls.classList.add('disabled')
+
+      filters.forEach((filter) => {
+        filter.disabled = true
+      })
+    } else {
+      filterControls.classList.remove('disabled')
+
+      filters.forEach((filter) => {
+        filter.disabled = false
+      })
+    }
+  }
+
   static resetSortParams () {
     searchInput.value = ''
-    sortAscButton.checked = true
-    sortDescButton.checked = false
+
+    sortInputs.forEach((input) => {
+      if (input.value === 'asc') {
+        input.checked = true
+      } else {
+        input.checked = false
+      }
+    })
+
     model.resetSort()
     App.clearError()
     App.showList()
@@ -117,8 +163,10 @@ export default class App {
   }
 
   static toggleItemHighlight (lng, lat) {
-    const items = Array.from(document.querySelectorAll('.list-item'))
-    const element = findElementByCoordinates(items, lng, lat)
+    let renderedItems = Array.from(container.querySelectorAll('.list-item'))
+    let element = renderedItems.find((item) => {
+      return (item.getAttribute('data-lng') === lng) && (item.getAttribute('data-lat') === lat)
+    })
 
     if (element) {
       element.classList.toggle('list-item-highlight')

@@ -1,4 +1,5 @@
 import Sortable from 'sortablejs'
+import App from '../app'
 
 const FILTERS = {
   'sun': '☀️',
@@ -27,7 +28,11 @@ export function enableSortable () {
       group: 'cities',
       handle: '.list-item-handle',
       draggable: '.list-item',
-      animation: 100
+      animation: 100,
+      onAdd: (e) => {
+        App.handleSelection(e.item)
+        App.disableFiltersIfEmpty()
+      }
     })
   }
 }
@@ -66,8 +71,9 @@ export function filterByFeature (array, feature) {
   return array.filter((item) => (regExp.test(item.features.join(' '))))
 }
 
-export function findElementByCoordinates (array, lng, lat) {
-  return array.find((el) =>
-    (el.getAttribute('data-lng') === lng) && (el.getAttribute('data-lat') === lat)
+export function convertElementToItem (items, element) {
+  return items.find((item) =>
+    (element.getAttribute('data-lng') === item.location.lng) &&
+    (element.getAttribute('data-lat') === item.location.lat)
   )
 }

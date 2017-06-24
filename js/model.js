@@ -33,8 +33,8 @@ export default class Model {
     return this._instance
   }
 
-  setSelectedItems (array) {
-    this._state.selectedItems = array
+  addSelectedItem (item) {
+    this._state.selectedItems.push(item)
   }
 
   setSort (sortType) {
