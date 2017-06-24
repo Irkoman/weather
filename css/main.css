@@ -116,7 +116,7 @@ input[type=radio]:checked + .radiogroup-item {
 
 .list-item {
   border-bottom: solid 1px #eee;
-  padding: 0 10px;
+  padding: 1px 10px 0;
   cursor: pointer;
   user-select: none;
 }
@@ -178,6 +178,28 @@ input[type=radio]:checked + .radiogroup-item {
   position: relative;
 }
 
+.mapboxgl-marker {
+  border-radius: 50%;
+}
+
+.marker {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: rgb(117, 224, 187);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+}
+
+.marker.highlighted {
+  box-shadow: 0 0 20px rgb(120, 120, 0);
+}
+
+.marker.disabled {
+  background-color: rgb(204, 204, 204);
+  cursor: default;
+}
+
 .popup {
   background: #fff;
   box-sizing: border-box;
@@ -188,6 +210,7 @@ input[type=radio]:checked + .radiogroup-item {
   left: 50%;
   transform: translateX(-50%);
   z-index: 100;
+  animation: fadeOut 3s linear forwards;
 }
 
 .popup-title-weather {
@@ -213,4 +236,14 @@ input[type=radio]:checked + .radiogroup-item {
   cursor: pointer;
   text-decoration: underline;
   text-decoration-style: dotted;
+}
+
+@keyframes fadeOut {
+  0%, 70% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
 }

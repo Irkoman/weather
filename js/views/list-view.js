@@ -1,4 +1,3 @@
-import App from '../app'
 import MapView from './map-view'
 import ErrorView from './error-view'
 import AbstractView from './abstract-view'
@@ -38,11 +37,11 @@ class ListView extends AbstractView {
       let lat = this._items[index].location.lat
 
       item.addEventListener('mouseenter', (e) => {
-        App.toggleMarkerHighlight(lng, lat, false)
+        MapView.getInstance().toggleMarkerHighlight(lng, lat)
       })
 
       item.addEventListener('mouseleave', (e) => {
-        App.toggleMarkerHighlight(lng, lat, true)
+        MapView.getInstance().toggleMarkerHighlight(lng, lat)
       })
 
       item.addEventListener('click', () => {

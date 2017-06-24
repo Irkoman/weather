@@ -43,6 +43,7 @@ export default class App {
 
   static showListSelected () {
     model.filter()
+    MapView.getInstance().disableIrrelevantMarkers(model.state.selectedItems)
     render(listSelected, ListView(model.state.selectedItems))
     enableSortable()
   }
@@ -108,23 +109,11 @@ export default class App {
   static resetFilterParams () {
     model.resetFilters()
     App.clearError()
+    MapView.getInstance().enableMarkers()
 
     filters.forEach((filter) => {
       filter.checked = false
     })
-  }
-
-  static toggleMarkerHighlight (lng, lat, isHighlighted) {
-    const markers = Array.from(document.querySelectorAll('.marker'))
-    const element = findElementByCoordinates(markers, lng, lat)
-
-    if (element) {
-      if (isHighlighted) {
-        element.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.6)'
-      } else {
-        element.style.boxShadow = '0 0 20px rgb(120, 120, 0)'
-      }
-    }
   }
 
   static toggleItemHighlight (lng, lat) {

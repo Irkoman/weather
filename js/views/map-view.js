@@ -1,19 +1,22 @@
-import App from '../app'
+import MarkerView from './marker-view'
 import PopupView from './popup-view'
 
 export default class MapView {
   constructor (data) {
-    this.instance = null
+    this._instance = null
     this._data = data
+    this._markers = []
+    this._irrelevantMarkers = []
     this._init()
+    this.showPopup = this.showPopup.bind(this)
   }
 
   static getInstance (data = null) {
-    if (!this.instance) {
-      this.instance = new MapView(data)
+    if (!this._instance) {
+      this._instance = new MapView(data)
     }
 
-    return this.instance
+    return this._instance
   }
 
   _init () {
@@ -34,29 +37,37 @@ export default class MapView {
   }
 
   addMarker (item) {
-    let lng = item.location.lng
-    let lat = item.location.lat
-    let el = document.createElement('div')
-    el.className = 'marker'
-    el.style.cssText += 'width: 15px; height: 15px; border-radius: 50%; background-color: rgb(117, 224, 187); box-shadow: 0 0 10px rgba(0, 0, 0, 0.6); cursor: pointer;'
-    el.setAttribute('data-lng', lng)
-    el.setAttribute('data-lat', lat)
+    let marker = new MarkerView(item)
 
-    el.addEventListener('mouseenter', () => {
-      App.toggleItemHighlight(lng, lat)
-    })
+    this._markers.push(marker)
 
-    el.addEventListener('mouseleave', () => {
-      App.toggleItemHighlight(lng, lat)
-    })
-
-    el.addEventListener('click', () => {
-      this.showPopup(item)
-    })
-
-    new mapboxgl.Marker(el, { offset: [-5, -5] })
-      .setLngLat([lng, lat])
+    new mapboxgl.Marker(marker.element, { offset: [-5, -5] })
+      .setLngLat([item.location.lng, item.location.lat])
       .addTo(this.map)
+  }
+
+  toggleMarkerHighlight (lng, lat) {
+    let marker = this._markers.find((marker) => {
+      return (marker.lng === lng) && (marker.lat === lat)
+    })
+
+    if (marker) {
+      marker.toggleHighlight()
+    }
+  }
+
+  disableIrrelevantMarkers (relevantItems) {
+    this._irrelevantMarkers = this._markers.filter((marker) => {
+      return !relevantItems.find((item) =>
+        (item.location.lng === marker.lng) && (item.location.lat === marker.lat)
+      )
+    })
+
+    this._irrelevantMarkers.forEach((marker) => marker.disable())
+  }
+
+  enableMarkers () {
+    this._markers.forEach((marker) => marker.enable())
   }
 
   showPopup (item) {
