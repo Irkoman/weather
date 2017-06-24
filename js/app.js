@@ -1,11 +1,9 @@
+import Model from './model'
 import MapView from './views/map-view'
 import ListView from './views/list-view'
 import ErrorView from './views/error-view'
 import {
   enableSortable,
-  sortAlphabetically,
-  sortBySearchValue,
-  filterByFeatures,
   findElementByCoordinates
 } from './helpers/sort-helper'
 
@@ -22,11 +20,11 @@ const render = (parent, element) => {
   parent.appendChild(element)
 }
 
-let weatherData
+let model
 
 export default class App {
   static set data (data) {
-    weatherData = data
+    model = Model.getInstance(data)
   }
 
   static checkStatus (response) {
@@ -37,55 +35,82 @@ export default class App {
     }
   }
 
-  static showError () {
-    render(listAll, ErrorView())
+  static showList () {
+    model.sort()
+    render(listAll, ListView(model.state.items))
+    enableSortable()
   }
 
-  static showList () {
-    render(listAll, ListView(weatherData))
+  static showListSelected () {
+    model.filter()
+    render(listSelected, ListView(model.state.selectedItems))
     enableSortable()
   }
 
   static showMap () {
-    MapView.getInstance(weatherData)
+    MapView.getInstance(model.state.items)
+  }
+
+  static showError () {
+    render(listAll, ErrorView())
+  }
+
+  static clearError () {
+    let errorMessage = container.querySelector('.error-message')
+
+    if (errorMessage) {
+      errorMessage.parentNode.removeChild(errorMessage)
+    }
   }
 
   static bindHandlers () {
     sortAscButton.addEventListener('click', () => {
-      let sortedItems = sortAlphabetically(weatherData)
-
-      render(listAll, ListView(sortedItems))
-      enableSortable()
+      model.setSort('asc')
+      App.showList()
     })
 
     sortDescButton.addEventListener('click', () => {
-      let sortedItems = sortAlphabetically(weatherData).reverse()
-
-      render(listAll, ListView(sortedItems))
-      enableSortable()
+      model.setSort('desc')
+      App.showList()
     })
 
     searchInput.addEventListener('input', (e) => {
-      let sortedItems = sortBySearchValue(weatherData, e.target.value)
-
-      render(listAll, ListView(sortedItems))
-      enableSortable()
+      model.setSearch(e.target.value)
+      App.showList()
     })
 
-    /*
-     * Полный сюр. Большей хаотичности ему добавляет то,
-     * что features в данных хранятся как эмоджи,
-     * а не "sun", "snow", "rain" и т. д., что было бы логичней
-     */
     filters.forEach((filter) => {
       filter.addEventListener('click', (e) => {
         let renderedItems = Array.from(listSelected.querySelectorAll('.list-item'))
-        let dataItems = weatherData.filter((item) => (findElementByCoordinates(renderedItems, item.location.lng, item.location.lat)))
-        let filteredItems = filterByFeatures(dataItems, e.target.value, e.target.checked)
+        let dataItems = model.state.data.filter((item) => (findElementByCoordinates(renderedItems, item.location.lng, item.location.lat)))
 
-        render(listSelected, ListView(filteredItems))
-        enableSortable()
+        if (e.target.checked) {
+          model.addFilter(e.target.value)
+        } else {
+          model.removeFilter(e.target.value)
+        }
+
+        model.setSelectedItems(dataItems)
+        App.showListSelected()
       })
+    })
+  }
+
+  static resetSortParams () {
+    searchInput.value = ''
+    sortAscButton.checked = true
+    sortDescButton.checked = false
+    model.resetSort()
+    App.clearError()
+    App.showList()
+  }
+
+  static resetFilterParams () {
+    model.resetFilters()
+    App.clearError()
+
+    filters.forEach((filter) => {
+      filter.checked = false
     })
   }
 

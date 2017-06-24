@@ -19,7 +19,7 @@ export function enableSortable () {
       handle: '.list-item-handle',
       draggable: '.list-item',
       animation: 100
-    })    
+    })
   }
 
   if (listSelected) {
@@ -28,12 +28,12 @@ export function enableSortable () {
       handle: '.list-item-handle',
       draggable: '.list-item',
       animation: 100
-    })    
+    })
   }
 }
 
-export function sortAlphabetically (array) {
-  return array.sort((a, b) => {
+export function sortAlphabetically (array, sortType) {
+  let sortedArray = array.sort((a, b) => {
     if (a.name < b.name) {
       return -1
     }
@@ -44,6 +44,14 @@ export function sortAlphabetically (array) {
 
     return 0
   })
+
+  switch (sortType) {
+    case 'desc':
+      return sortedArray.reverse()
+    case 'asc':
+    default:
+      return sortedArray
+  }
 }
 
 export function sortBySearchValue (array, value) {
@@ -52,10 +60,10 @@ export function sortBySearchValue (array, value) {
   return array.filter((item) => (regExp.test(item.name)))
 }
 
-export function filterByFeatures (array, feature, isChecked) {
+export function filterByFeature (array, feature) {
   let regExp = new RegExp(FILTERS[feature], 'i')
 
-  return array.filter((item) => (isChecked && regExp.test(item.features.join(' '))))
+  return array.filter((item) => (regExp.test(item.features.join(' '))))
 }
 
 export function findElementByCoordinates (array, lng, lat) {

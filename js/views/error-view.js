@@ -1,3 +1,4 @@
+import App from '../app'
 import AbstractView from './abstract-view'
 
 const ERROR_TEXTS = {
@@ -17,6 +18,20 @@ class ErrorView extends AbstractView {
         <p>${ERROR_TEXTS[this._errorName]}</p>
       </div>
     `
+  }
+
+  bindHandlers () {
+    const resetButton = this.element.querySelector('.error-message-reset')
+
+    if (resetButton) {
+      resetButton.addEventListener('click', (e) => {
+        if (e.target.closest('.cities-all')) {
+          App.resetSortParams()
+        } else {
+          App.resetFilterParams()
+        }
+      })
+    }
   }
 }
 
