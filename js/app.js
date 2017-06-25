@@ -78,20 +78,26 @@ export default class App {
     })
 
     scaleInputs.forEach((input) => {
+      input.checked = (input.value === model.state.scale)
+
       input.addEventListener('click', (e) => {
         let scaleType = e.target.value
 
-        model.setScale(scaleType)
-        model = new Model(convertTemperature(model.state.data, scaleType), model.state)
-        App.showList()
+        if (model.state.scale !== scaleType) {
+          model.setScale(scaleType)
+          model = new Model(convertTemperature(model.state.data, scaleType), model.state)
+          App.showList()
 
-        if (model.state.selectedItems.length) {
-          App.showListSelected()
+          if (model.state.selectedItems.length) {
+            App.showListSelected()
+          }
         }
       })
     })
 
     sortInputs.forEach((input) => {
+      input.checked = (input.value === model.state.sort)
+
       input.addEventListener('click', (e) => {
         model.setSort(e.target.value)
         App.showList()
@@ -155,15 +161,6 @@ export default class App {
 
   static resetSortParams () {
     searchInput.value = ''
-
-    sortInputs.forEach((input) => {
-      if (input.value === 'asc') {
-        input.checked = true
-      } else {
-        input.checked = false
-      }
-    })
-
     model.resetSort()
     App.clearError(listAll)
     App.showList()

@@ -8,8 +8,8 @@ const initialState = {
   data: [],
   items: [],
   selectedItems: [],
-  scale: 'celsius',
-  sort: 'asc',
+  scale: localStorage.getItem('scale') || 'celsius',
+  sort: localStorage.getItem('sort') || 'asc',
   search: '',
   filters: []
 }
@@ -40,10 +40,12 @@ export default class Model {
 
   setScale (scaleType) {
     this._state.scale = scaleType
+    localStorage.setItem('scale', scaleType)
   }
 
   setSort (sortType) {
     this._state.sort = sortType
+    localStorage.setItem('sort', sortType)
   }
 
   /*
@@ -77,7 +79,6 @@ export default class Model {
   }
 
   resetSort () {
-    this._state.sort = 'asc'
     this._state.search = ''
     this._state.items = this._state.data
   }

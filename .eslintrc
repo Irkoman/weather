@@ -2,6 +2,7 @@
   "extends": "standard",
 
   "globals": {
-    "mapboxgl": true
+    "mapboxgl": true,
+    "localStorage": true
   }
 }
