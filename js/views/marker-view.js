@@ -19,8 +19,8 @@ export default class MarkerView extends AbstractView {
   }
 
   bindHandlers () {
-    this.element.addEventListener('mouseenter', () => App.toggleItemHighlight(this.lng, this.lat))
-    this.element.addEventListener('mouseleave', () => App.toggleItemHighlight(this.lng, this.lat))
+    this.element.addEventListener('mouseenter', () => App.highlightItem(this.lng, this.lat))
+    this.element.addEventListener('mouseleave', () => App.highlightItem(this.lng, this.lat))
     this.element.addEventListener('click', this._onClick)
   }
 

@@ -242,6 +242,11 @@ input[type=radio]:checked + .radiogroup-item {
   text-decoration-style: dotted;
 }
 
+.text-highlighted {
+  background: #fce100;
+  font-weight: bold;
+}
+
 @keyframes fadeOut {
   0%, 70% {
     opacity: 1;

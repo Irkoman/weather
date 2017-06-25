@@ -41,6 +41,7 @@ export default class App {
     App.disableSortIfEmpty()
     App.disableFiltersIfEmpty()
     render(listAll, ListView(model.state.items))
+    App.highlightSearchText()
     enableSortable()
   }
 
@@ -162,7 +163,7 @@ export default class App {
     })
   }
 
-  static toggleItemHighlight (lng, lat) {
+  static highlightItem (lng, lat) {
     let renderedItems = Array.from(container.querySelectorAll('.list-item'))
     let element = renderedItems.find((item) => {
       return (item.getAttribute('data-lng') === lng) && (item.getAttribute('data-lat') === lat)
@@ -170,6 +171,19 @@ export default class App {
 
     if (element) {
       element.classList.toggle('list-item-highlight')
+    }
+  }
+
+  static highlightSearchText () {
+    if (model.state.items.length && model.state.search.length) {
+      let excludeTagsExp = new RegExp('>(.*?)<', 'gi')
+      let searchExp = new RegExp(model.state.search, 'gi')
+
+      listAll.innerHTML = listAll.innerHTML.replace(excludeTagsExp, (match) => {
+        return match.replace(searchExp, (exactMatch) => {
+          return `<span class="text-highlighted">${exactMatch}</span>`
+        })
+      })
     }
   }
 }

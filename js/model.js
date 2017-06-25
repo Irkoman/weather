@@ -41,8 +41,11 @@ export default class Model {
     this._state.sort = sortType
   }
 
+  /*
+   * Secure the user string before saving it to the state
+   */
   setSearch (searchValue) {
-    this._state.search = searchValue
+    this._state.search = searchValue.replace(/[$&<>"'`^()=+-\\/]/g, '\\$&')
   }
 
   addFilter (filter) {
@@ -58,8 +61,8 @@ export default class Model {
   }
 
   sort () {
-    this._state.items = sortAlphabetically(this._state.items, this._state.sort)
-    this._state.items = sortBySearchValue(this._state.items, this._state.search)
+    this._state.items = sortAlphabetically(this._state.data, this._state.sort)
+    this._state.items = sortBySearchValue(this._state.data, this._state.search)
   }
 
   filter () {
