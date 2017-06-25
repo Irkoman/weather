@@ -4,13 +4,15 @@ import ListView from './views/list-view'
 import ErrorView from './views/error-view'
 import {
   enableSortable,
-  convertElementToItem
+  convertElementToItem,
+  convertTemperature
 } from './helpers/sort-helper'
 
 const container = document.getElementById('layout')
 const sortControls = container.querySelector('.layout-col-1 .cities-filters')
 const filterControls = container.querySelector('.layout-col-2 .cities-filters')
 const searchInput = container.querySelector('.cities-filters-name')
+const scaleInputs = container.querySelectorAll('input[name="cities-scale"]')
 const sortInputs = container.querySelectorAll('input[name="cities-sort"]')
 const filters = container.querySelectorAll('input[name="cities-features"]')
 const listAll = container.querySelector('.cities-all')
@@ -61,7 +63,7 @@ export default class App {
     render(listAll, ErrorView())
   }
 
-  static clearError () {
+  static clearError (container) {
     let errorMessage = container.querySelector('.error-message')
 
     if (errorMessage) {
@@ -73,6 +75,20 @@ export default class App {
     searchInput.addEventListener('input', (e) => {
       model.setSearch(e.target.value)
       App.showList()
+    })
+
+    scaleInputs.forEach((input) => {
+      input.addEventListener('click', (e) => {
+        let scaleType = e.target.value
+
+        model.setScale(scaleType)
+        model = new Model(convertTemperature(model.state.data, scaleType), model.state)
+        App.showList()
+
+        if (model.state.selectedItems.length) {
+          App.showListSelected()
+        }
+      })
     })
 
     sortInputs.forEach((input) => {
@@ -149,13 +165,13 @@ export default class App {
     })
 
     model.resetSort()
-    App.clearError()
+    App.clearError(listAll)
     App.showList()
   }
 
   static resetFilterParams () {
     model.resetFilters()
-    App.clearError()
+    App.clearError(listSelected)
     MapView.getInstance().enableMarkers()
 
     filters.forEach((filter) => {

@@ -65,6 +65,10 @@ body {
   flex-direction: row;
 }
 
+.radiogroup:first-child {
+  margin-right: 10px;
+}
+
 .radiogroup input[type=checkbox],
 .radiogroup input[type=radio] {
   left: -900em;
@@ -109,8 +113,8 @@ input[type=radio]:checked + .radiogroup-item {
 }
 
 .cities-filters-name {
-  margin-left: 30px;
-  transform: scale(1.2);
+  min-height: 25px;
+  margin-left: 10px;
 }
 
 /* Списки */

@@ -77,3 +77,19 @@ export function convertElementToItem (items, element) {
     (element.getAttribute('data-lat') === item.location.lat)
   )
 }
+
+export function convertTemperature (array, scaleType) {
+  array.forEach((item) => {
+    if (item.weather) {
+      let temperature = +item.weather.replace(/\D+/g, '')
+
+      if (scaleType === 'celsius') {
+        item.weather = Math.round((temperature - 32) * 5 / 9) + '°C'
+      } else {
+        item.weather = Math.round(temperature * 9 / 5 + 32) + '°F'
+      }
+    }
+  })
+
+  return array
+}

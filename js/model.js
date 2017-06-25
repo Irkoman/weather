@@ -8,6 +8,7 @@ const initialState = {
   data: [],
   items: [],
   selectedItems: [],
+  scale: 'celsius',
   sort: 'asc',
   search: '',
   filters: []
@@ -35,6 +36,10 @@ export default class Model {
 
   addSelectedItem (item) {
     this._state.selectedItems.push(item)
+  }
+
+  setScale (scaleType) {
+    this._state.scale = scaleType
   }
 
   setSort (sortType) {
