@@ -2,11 +2,8 @@ import Model from './model'
 import MapView from './views/map-view'
 import ListView from './views/list-view'
 import ErrorView from './views/error-view'
-import {
-  enableSortable,
-  convertElementToItem,
-  convertTemperature
-} from './helpers/sort-helper'
+import { enableSortable } from './helpers/sort-helper'
+import { convertElementToItem, convertTemperature } from './helpers/convert-helper'
 
 const container = document.getElementById('layout')
 const sortControls = container.querySelector('.layout-col-1 .cities-filters')
@@ -23,6 +20,7 @@ const render = (parent, element) => {
   parent.appendChild(element)
 }
 
+let url
 let model
 
 export default class App {
@@ -30,18 +28,20 @@ export default class App {
     model = Model.getInstance(data)
   }
 
+  static set url (srcUrl) {
+    url = srcUrl
+  }
+
   static checkStatus (response) {
     if (response.status >= 200 && response.status < 300) {
       return response
-    } else {
-      throw new Error(`${response.status}: ${response.statusText}`)
     }
+
+    throw new Error(`${response.status}: ${response.statusText}`)
   }
 
   static showList () {
     model.sort()
-    App.disableSortIfEmpty()
-    App.disableFiltersIfEmpty()
     render(listAll, ListView(model.state.items))
     App.highlightSearchText()
     enableSortable()
@@ -72,8 +72,11 @@ export default class App {
   }
 
   static bindHandlers () {
+    searchInput.value = model.state.search
+
     searchInput.addEventListener('input', (e) => {
       model.setSearch(e.target.value)
+      App.storeIntoParams()
       App.showList()
     })
 
@@ -85,7 +88,8 @@ export default class App {
 
         if (model.state.scale !== scaleType) {
           model.setScale(scaleType)
-          model = new Model(convertTemperature(model.state.data, scaleType), model.state)
+          model = new Model(convertTemperature(model.state.data, model.state.scale), model.state)
+          App.storeIntoParams()
           App.showList()
 
           if (model.state.selectedItems.length) {
@@ -100,6 +104,7 @@ export default class App {
 
       input.addEventListener('click', (e) => {
         model.setSort(e.target.value)
+        App.storeIntoParams()
         App.showList()
       })
     })
@@ -112,6 +117,7 @@ export default class App {
           model.removeFilter(e.target.value)
         }
 
+        App.storeIntoParams()
         App.showListSelected()
       })
     })
@@ -163,6 +169,7 @@ export default class App {
     searchInput.value = ''
     model.resetSort()
     App.clearError(listAll)
+    App.storeIntoParams()
     App.showList()
   }
 
@@ -198,5 +205,30 @@ export default class App {
         })
       })
     }
+  }
+
+  static storeIntoParams () {
+    url.query.sort = model.state.sort
+    url.query.scale = model.state.scale
+    url.query.search = model.state.search
+    window.history.pushState(null, null, url)
+  }
+
+  static restoreFromParams () {
+    for (let key in url.query) {
+      switch (key) {
+        case 'scale':
+          model.setScale(url.query.scale)
+          break
+        case 'sort':
+          model.setSort(url.query.sort)
+          break
+        case 'search':
+          model.setSearch(url.query.search)
+          break
+      }
+    }
+
+    App.showList()
   }
 }

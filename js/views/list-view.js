@@ -54,7 +54,7 @@ class ListView extends AbstractView {
 export default (items) => {
   if (items.length) {
     return new ListView(items).element
-  } else {
-    return new ErrorView('empty')
   }
+
+  return new ErrorView('empty')
 }
